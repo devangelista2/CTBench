@@ -34,7 +34,7 @@ def image_artifacts(K, x, noise_level, p):
             # Compute z = x_dagger
             CGLS = solver.CGLS(K)
             z = CGLS(
-                y_delta, x0=np.zeros_like(x_true_flat), x_true=x_true_flat
+                y_delta, x0=np.zeros_like(x_true_flat), x_true=x_true_flat, kmax=20
             ).reshape((c, nx, ny))
 
         z_batch[i] = z
@@ -83,8 +83,8 @@ K = operators.CTProjector((nx, ny), angles, det_size=DET_SIZE, geometry=GEOMETRY
 
 ######################## Define train parameters
 # Get NN model
-model_suffix = "ResUNet"
-model = architectures.ResUNet(img_ch=1, output_ch=1).to(DEVICE)
+model_suffix = "UNet"
+model = architectures.UNet(img_ch=1, output_ch=1).to(DEVICE)
 
 # Loss function
 loss_fn = nn.L1Loss()
