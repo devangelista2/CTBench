@@ -23,7 +23,9 @@ noise_level = 0.01
 
 # Load configuration
 cfg = config.initialize_default_config(dataset)
+cfg = config.parse_config(cfg)
 
+"""
 img_ch, nx, ny = cfg["image_shape"]
 gt_path = f"../data/{dataset}/test/"
 device = cfg["device"]
@@ -51,3 +53,4 @@ if NETT_test:
 if FBPLPP_test:
     FBPLPP_model = LPP.FBP_LPP(cfg)
     FBPLPP_model.train(batch_size=8, n_epochs=100, noise_level=0.01)
+"""
