@@ -7,7 +7,7 @@ import torch
 from PIL import Image
 from torch.utils.data import Dataset
 
-from benchmarking.glob import utilities
+from miscellanous import utilities
 
 
 class ImageDataset(Dataset):
