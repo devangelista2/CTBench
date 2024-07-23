@@ -89,9 +89,9 @@ class NETT:
                 RE = np.linalg.norm(
                     x.detach().cpu().flatten() - x_true.flatten()
                 ) / np.linalg.norm(x_true.flatten())
-            print(
-                f"It. {k+1}/{maxit}: gradF = {gradF:.3f}, gradR = {gradR:.3f}, grad = {grad:.3f}, RE = {RE:.3f}."
-            )
+                print(
+                    f"It. {k+1}/{maxit}: gradF = {gradF:.3f}, gradR = {gradR:.3f}, grad = {grad:.3f}, RE = {RE:.3f}."
+                )
 
             # Restart
             x_tilde.grad = None

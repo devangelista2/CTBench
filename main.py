@@ -7,11 +7,12 @@ import config
 from miscellanous import datasets, solver, utilities
 from models.FBPLPP import LPP
 from models.NETT import NETT
+from models.FISTA import FISTA
 
 ##################### TEST SETUP
 NETT_test = False
-FBPLPP_test = True
-FISTA_test = False
+FBPLPP_test = False
+FISTA_test = True
 
 ##################### PARAMETER INITIALIZATION
 # Define dataset
@@ -25,7 +26,6 @@ noise_level = 0.01
 cfg = config.initialize_default_config(dataset)
 cfg = config.parse_config(cfg)
 
-"""
 img_ch, nx, ny = cfg["image_shape"]
 gt_path = f"../data/{dataset}/test/"
 device = cfg["device"]
@@ -52,5 +52,12 @@ if NETT_test:
 ################## FBP-LPP Testing
 if FBPLPP_test:
     FBPLPP_model = LPP.FBP_LPP(cfg)
-    FBPLPP_model.train(batch_size=8, n_epochs=100, noise_level=0.01)
-"""
+    FBPLPP_model.load_weights()
+
+    x_FBPLPP = FBPLPP_model(y_delta)
+
+################## FISTA-W Testing
+if FISTA_test:
+    FISTA_model = FISTA.FISTAWavelet(cfg)
+
+    x_FISTA = FISTA_model(y_delta, lmbda=0.10, x_true=x_true, maxit=100)
