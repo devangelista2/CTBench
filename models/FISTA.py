@@ -1,13 +1,7 @@
-import matplotlib.pyplot as plt
 import numpy as np
 import pywt
-import torch
-import torch.nn as nn
-from torch.utils.data import DataLoader
-from torchvision import transforms
-from tqdm import tqdm
 
-from miscellanous import architectures, datasets, operators, solver, utilities
+from miscellanous import utilities
 
 
 class FISTAWavelet:
@@ -31,7 +25,7 @@ class FISTAWavelet:
         wavelet_type="db1", 
         maxit=100, 
         tolx=1e-6,
-    ):
+    ) -> np.ndarray:
         # Initialization
         if x_0 is None:
             x_0 = np.zeros((self.nx * self.ny,))

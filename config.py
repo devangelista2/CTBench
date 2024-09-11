@@ -9,7 +9,7 @@ def initialize_default_config(dataset):
             "angular_range": 180,
             "n_angles": 60,
             "geometry": "fanflat",
-            "image_shape": [1, 256, 256],
+            "image_shape": [1, 512, 512],
         }
         _, nx, ny = default_config["image_shape"]
         default_config["det_size"] = int(max(nx, ny) * 2)

@@ -64,7 +64,7 @@ class UNet(nn.Module):
 
         d1 = self.Conv_1x1(d2)
 
-        return nn.ReLU()(d1)
+        return nn.Sigmoid()(d1)
 
 
 class AttnUNet(nn.Module):

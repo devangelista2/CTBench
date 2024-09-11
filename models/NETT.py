@@ -41,7 +41,7 @@ class NETT:
         step_size_F=1e-4,
         step_size_R=1e-2,
         maxit=100,
-    ):
+    ) -> torch.Tensor:
         if x_0 is None:
             x_0 = np.zeros((self.n_ch * self.nx * self.ny,))
 
@@ -135,8 +135,8 @@ class NETT:
         train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
 
         # Define loss function and optimizer
-        loss_fn = nn.L1Loss()
-        optimizer = torch.optim.Adam(self.model.parameters(), lr=1e-3)
+        loss_fn = nn.MSELoss()
+        optimizer = torch.optim.Adam(self.model.parameters(), lr=1e-2)
 
         # Cycle over the epochs
         print(

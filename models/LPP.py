@@ -35,7 +35,7 @@ class FBP_LPP:
     def __call__(
         self,
         y_delta,
-    ):
+    ) -> torch.Tensor:
         # Preprocess y_delta -> FBP(y_delta)
         x_FBP = self.K.FBP(y_delta)
 
