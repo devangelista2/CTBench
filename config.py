@@ -91,6 +91,11 @@ def parse_config(config):
     )
     args = dict(vars(parser.parse_args()))
 
+    # Update det_size if None
+    if args["det_size"] is None:
+        _, nx, ny = args["image_shape"]
+        args["det_size"] = int(max(nx, ny) * 2)
+
     # Remove keys with None values from the args dict
     args = {k: v for k, v in args.items() if v is not None}
 
@@ -99,5 +104,6 @@ def parse_config(config):
 
     # Update the merged_dict with dict2 values
     merged_dict.update(args)
+
     print(merged_dict)
     return merged_dict

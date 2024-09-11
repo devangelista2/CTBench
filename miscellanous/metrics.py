@@ -3,6 +3,11 @@ import torch
 from skimage.metrics import structural_similarity as ssim
 
 
+def residual(x_pred, x_true, K):
+    """Compute the residual || Kx_pred - Kx_true ||_2^2"""
+    return np.linalg.norm(K(x_pred).flatten() - K(x_true).flatten(), 2) ** 2
+
+
 def RE(x_pred, x_true):
     """Compute relative error between numpy arrays."""
     return np.linalg.norm(x_pred.flatten() - x_true.flatten(), 2) / np.linalg.norm(

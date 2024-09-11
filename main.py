@@ -7,8 +7,9 @@ from models import FISTA, LPP, NETT
 
 ##################### TEST SETUP
 NETT_test = True
-FBPLPP_test = False
-FISTA_test = False
+FBP_test = True
+FBPLPP_test = True
+FISTA_test = True
 
 ##################### OUTPUT PARAMETERS
 output_path = "./results"
@@ -19,18 +20,18 @@ PRINT_METRICS = True
 
 ##################### PARAMETER INITIALIZATION
 # Define dataset
-dataset = "Mayo" #Mayo, COULE
-idx = 10 # 10 or 6
+dataset = "Mayo"  # Mayo, COULE
+idx = 10  # 10 or 6
 
 # Define additional problem parameters
-noise_level = 0.001 #Mayo 0.001, COULE 0.01
- 
+noise_level = 0.01  # Mayo 0.001, COULE 0.01
+
 # Load configuration
 cfg = config.initialize_default_config(dataset)
 cfg = config.parse_config(cfg)
 
 img_ch, nx, ny = cfg["image_shape"]
-gt_path = f"../data/{dataset}/test/"
+gt_path = f"../data/{dataset}/train/"
 device = cfg["device"]
 
 # Load test data and x_true
@@ -49,19 +50,40 @@ if NETT_test:
     NETT_model.load_weights()
 
     x_NETT = NETT_model(
-        y_delta, lmbda=1e-4, x_true=x_true, step_size_F=None, step_size_R=1e-2, maxit=300
+        y_delta,
+        lmbda=1e-1,
+        x_true=x_true,
+        step_size_F=None,
+        step_size_R=1e-2,
+        maxit=300,
     ).reshape((nx, ny))
 
     if SAVE_OUTPUT_IMAGE:
         fname = f"{output_path}/NETT_{dataset}_{nx}_{cfg['angular_range']}_{cfg['n_angles']}.png"
-        plt.imsave(fname, x_NETT.reshape(nx, ny), cmap='gray')
+        plt.imsave(fname, x_NETT.reshape(nx, ny), cmap="gray")
 
     if PRINT_METRICS:
         RE = metrics.RE(x_NETT.numpy(), x_true.numpy().reshape((nx, ny)))
         RMSE = metrics.RMSE(x_NETT.numpy(), x_true.numpy().reshape((nx, ny)))
         SSIM = metrics.SSIM(x_NETT.numpy(), x_true.numpy().reshape((nx, ny)))
-        output_metrics.append(['NETT', RE, RMSE, SSIM])
-        print(f"NETT: RE = {RE:0.4f}, RMSE: {RMSE:0.4f}, SSIM: {SSIM:0.4f}.")
+        Res = metrics.residual(x_NETT.numpy(), x_true.numpy().reshape((nx, ny)), K)
+        output_metrics.append(["NETT", RE, RMSE, SSIM, Res])
+        # print(f"NETT: RE = {RE:0.4f}, RMSE: {RMSE:0.4f}, SSIM: {SSIM:0.4f}.")
+
+################## FBP Testing
+if FBP_test:
+    x_FBP = K.FBP(y_delta).reshape((nx, ny))
+
+    if SAVE_OUTPUT_IMAGE:
+        fname = f"{output_path}/FBP_{dataset}_{nx}_{cfg['angular_range']}_{cfg['n_angles']}.png"
+        plt.imsave(fname, x_FBP.reshape(nx, ny), cmap="gray")
+
+    if PRINT_METRICS:
+        RE = metrics.RE(x_FBP, x_true.numpy().reshape((nx, ny)))
+        RMSE = metrics.RMSE(x_FBP, x_true.numpy().reshape((nx, ny)))
+        SSIM = metrics.SSIM(x_FBP, x_true.numpy().reshape((nx, ny)))
+        Res = metrics.residual(x_FBP, x_true.numpy().reshape((nx, ny)), K)
+        output_metrics.append(["FBP", RE, RMSE, SSIM, Res])
 
 ################## FBP-LPP Testing
 if FBPLPP_test:
@@ -72,35 +94,41 @@ if FBPLPP_test:
 
     if SAVE_OUTPUT_IMAGE:
         fname = f"{output_path}/FBPLPP_{dataset}_{nx}_{cfg['angular_range']}_{cfg['n_angles']}.png"
-        plt.imsave(fname, x_FBPLPP.reshape(nx, ny), cmap='gray')
+        plt.imsave(fname, x_FBPLPP.reshape(nx, ny), cmap="gray")
 
     if PRINT_METRICS:
         RE = metrics.RE(x_FBPLPP.numpy(), x_true.numpy().reshape((nx, ny)))
         RMSE = metrics.RMSE(x_FBPLPP.numpy(), x_true.numpy().reshape((nx, ny)))
         SSIM = metrics.SSIM(x_FBPLPP.numpy(), x_true.numpy().reshape((nx, ny)))
-        output_metrics.append(['FBP-LPP', RE, RMSE, SSIM])
-   
+        Res = metrics.residual(x_FBPLPP.numpy(), x_true.numpy().reshape((nx, ny)), K)
+        output_metrics.append(["FBP-LPP", RE, RMSE, SSIM, Res])
+
 
 ################## FISTA-W Testing
 if FISTA_test:
     FISTA_model = FISTA.FISTAWavelet(cfg)
 
-    x_FISTA = FISTA_model(y_delta, lmbda=0.001, x_true=x_true, maxit=500).reshape((nx, ny))
+    x_FISTA = FISTA_model(y_delta, lmbda=0.001, x_true=x_true, maxit=500).reshape(
+        (nx, ny)
+    )
 
     if SAVE_OUTPUT_IMAGE:
         fname = f"{output_path}/FISTA_{dataset}_{nx}_{cfg['angular_range']}_{cfg['n_angles']}.png"
-        plt.imsave(fname, x_FISTA.reshape(nx, ny), cmap='gray')
+        plt.imsave(fname, x_FISTA.reshape(nx, ny), cmap="gray")
 
     if PRINT_METRICS:
         RE = metrics.RE(x_FISTA, x_true.numpy().reshape((nx, ny)))
         RMSE = metrics.RMSE(x_FISTA, x_true.numpy().reshape((nx, ny)))
         SSIM = metrics.SSIM(x_FISTA, x_true.numpy().reshape((nx, ny)))
-        output_metrics.append(['FBP-LPP', RE, RMSE, SSIM])
-        print(f"FISTA-W: RE = {RE:0.4f}, RMSE: {RMSE:0.4f}, SSIM: {SSIM:0.4f}.")
+        Res = metrics.residual(x_FISTA, x_true.numpy().reshape((nx, ny)), K)
+        output_metrics.append(["FISTA-W", RE, RMSE, SSIM, Res])
+        # print(f"FISTA-W: RE = {RE:0.4f}, RMSE: {RMSE:0.4f}, SSIM: {SSIM:0.4f}.")
 
 ################## Printing out
-# if PRINT_METRICS:
-#     print("**************************")
-#     for metric in output_metrics:
-#         print(f"{metric[0]}: RE = {metric[1]:0.4f}, RMSE: {metric[2]:0.4f}, SSIM: {metric[3]:0.4f}.")
-#     print("**************************")
+if PRINT_METRICS:
+    print("**************************")
+    for metric in output_metrics:
+        print(
+            f"{metric[0]}: RE = {metric[1]:0.4f}, RMSE: {metric[2]:0.4f}, SSIM: {metric[3]:0.4f}, Res: {metric[4]:0.4f}."
+        )
+    print("**************************")
