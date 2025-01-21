@@ -2,7 +2,7 @@ import config
 from models import LPP, NETT
 
 ##################### MODEL SELECTION
-train_NETT = False
+train_NETT = True
 train_FBPLPP = True
 
 ##################### PARAMETER INITIALIZATION

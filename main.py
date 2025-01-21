@@ -51,7 +51,7 @@ if NETT_test:
 
     x_NETT = NETT_model(
         y_delta,
-        lmbda=1e-1,
+        lmbda=0.01,
         x_true=x_true,
         step_size_F=None,
         step_size_R=1e-2,
@@ -66,8 +66,9 @@ if NETT_test:
         RE = metrics.RE(x_NETT.numpy(), x_true.numpy().reshape((nx, ny)))
         RMSE = metrics.RMSE(x_NETT.numpy(), x_true.numpy().reshape((nx, ny)))
         SSIM = metrics.SSIM(x_NETT.numpy(), x_true.numpy().reshape((nx, ny)))
+        PSNR = metrics.PSNR(x_NETT.numpy(), x_true.numpy().reshape((nx, ny)))
         Res = metrics.residual(x_NETT.numpy(), x_true.numpy().reshape((nx, ny)), K)
-        output_metrics.append(["NETT", RE, RMSE, SSIM, Res])
+        output_metrics.append(["NETT", RE, RMSE, SSIM, PSNR, Res])
         # print(f"NETT: RE = {RE:0.4f}, RMSE: {RMSE:0.4f}, SSIM: {SSIM:0.4f}.")
 
 ################## FBP Testing
@@ -82,8 +83,9 @@ if FBP_test:
         RE = metrics.RE(x_FBP, x_true.numpy().reshape((nx, ny)))
         RMSE = metrics.RMSE(x_FBP, x_true.numpy().reshape((nx, ny)))
         SSIM = metrics.SSIM(x_FBP, x_true.numpy().reshape((nx, ny)))
+        PSNR = metrics.PSNR(x_FBP, x_true.numpy().reshape((nx, ny)))
         Res = metrics.residual(x_FBP, x_true.numpy().reshape((nx, ny)), K)
-        output_metrics.append(["FBP", RE, RMSE, SSIM, Res])
+        output_metrics.append(["FBP", RE, RMSE, SSIM, PSNR, Res])
 
 ################## FBP-LPP Testing
 if FBPLPP_test:
@@ -100,15 +102,16 @@ if FBPLPP_test:
         RE = metrics.RE(x_FBPLPP.numpy(), x_true.numpy().reshape((nx, ny)))
         RMSE = metrics.RMSE(x_FBPLPP.numpy(), x_true.numpy().reshape((nx, ny)))
         SSIM = metrics.SSIM(x_FBPLPP.numpy(), x_true.numpy().reshape((nx, ny)))
+        PSNR = metrics.PSNR(x_FBPLPP.numpy(), x_true.numpy().reshape((nx, ny)))
         Res = metrics.residual(x_FBPLPP.numpy(), x_true.numpy().reshape((nx, ny)), K)
-        output_metrics.append(["FBP-LPP", RE, RMSE, SSIM, Res])
+        output_metrics.append(["FBP-LPP", RE, RMSE, SSIM, PSNR, Res])
 
 
 ################## FISTA-W Testing
 if FISTA_test:
     FISTA_model = FISTA.FISTAWavelet(cfg)
 
-    x_FISTA = FISTA_model(y_delta, lmbda=0.001, x_true=x_true, maxit=500).reshape(
+    x_FISTA = FISTA_model(y_delta, lmbda=0.1, x_true=x_true, maxit=500).reshape(
         (nx, ny)
     )
 
@@ -120,8 +123,9 @@ if FISTA_test:
         RE = metrics.RE(x_FISTA, x_true.numpy().reshape((nx, ny)))
         RMSE = metrics.RMSE(x_FISTA, x_true.numpy().reshape((nx, ny)))
         SSIM = metrics.SSIM(x_FISTA, x_true.numpy().reshape((nx, ny)))
+        PSNR = metrics.PSNR(x_FISTA, x_true.numpy().reshape((nx, ny)))
         Res = metrics.residual(x_FISTA, x_true.numpy().reshape((nx, ny)), K)
-        output_metrics.append(["FISTA-W", RE, RMSE, SSIM, Res])
+        output_metrics.append(["FISTA-W", RE, RMSE, SSIM, PSNR, Res])
         # print(f"FISTA-W: RE = {RE:0.4f}, RMSE: {RMSE:0.4f}, SSIM: {SSIM:0.4f}.")
 
 ################## Printing out
@@ -129,6 +133,6 @@ if PRINT_METRICS:
     print("**************************")
     for metric in output_metrics:
         print(
-            f"{metric[0]}: RE = {metric[1]:0.4f}, RMSE: {metric[2]:0.4f}, SSIM: {metric[3]:0.4f}, Res: {metric[4]:0.4f}."
+            f"{metric[0]}: RE = {metric[1]:0.4f}, RMSE: {metric[2]:0.4f}, SSIM: {metric[3]:0.4f}, PSNR: {metric[4]:0.4f}, Res: {metric[5]:0.4f}."
         )
     print("**************************")

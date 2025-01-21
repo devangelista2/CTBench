@@ -8,6 +8,19 @@ def residual(x_pred, x_true, K):
     return np.linalg.norm(K(x_pred).flatten() - K(x_true).flatten(), 2) ** 2
 
 
+def PSNR(x_pred, x_true):
+    """
+    Compute the PSNR between x_pred and x_true, assuming both are in range [0, 1]
+    """
+
+    mse = np.mean(np.square(x_pred.flatten() - x_true.flatten()))
+    if mse == 0:  # MSE is zero means no noise is present in the signal .
+        # Therefore PSNR have no importance.
+        return 100
+    psnr = 20 * np.log10(1 / np.sqrt(mse))
+    return psnr
+
+
 def RE(x_pred, x_true):
     """Compute relative error between numpy arrays."""
     return np.linalg.norm(x_pred.flatten() - x_true.flatten(), 2) / np.linalg.norm(
