@@ -13,6 +13,7 @@ def gaussian_noise(y, noise_level):
     e = np.random.randn(*y.shape)
     return e / np.linalg.norm(e.flatten()) * np.linalg.norm(y.flatten()) * noise_level
 
+
 def initialize_CT_projector(config):
     # Extract informations
     _, nx, ny = config["image_shape"]
@@ -20,7 +21,9 @@ def initialize_CT_projector(config):
     n_angles = config["n_angles"]
     det_size = config["det_size"]
     geometry = config["geometry"]
-    angles = np.linspace(np.deg2rad(0), np.deg2rad(angular_range), n_angles, endpoint=False)
+    angles = np.linspace(
+        np.deg2rad(0), np.deg2rad(angular_range), n_angles, endpoint=False
+    )
 
     # Define projector
     K = operators.CTProjector((nx, ny), angles, det_size=det_size, geometry=geometry)

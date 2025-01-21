@@ -278,6 +278,35 @@ class ResUNet(nn.Module):
         return d1
 
 
+class ResidualUnfoldBlock(nn.Module):
+    def __init__(self, img_ch=1, n_ch=64):
+        super().__init__()
+
+        self.in_conv = nn.Conv2d(img_ch, n_ch, kernel_size=3, padding="same")
+
+        self.group1 = nn.GroupNorm(4, n_ch)
+        self.act1 = nn.SiLU()
+        self.conv1 = nn.Conv2d(n_ch, n_ch, kernel_size=3, padding="same")
+        self.group2 = nn.GroupNorm(4, n_ch)
+        self.act2 = nn.SiLU()
+        self.conv2 = nn.Conv2d(n_ch, n_ch, kernel_size=3, padding="same")
+
+        self.out_conv = nn.Conv2d(n_ch, img_ch, kernel_size=3, padding="same")
+
+    def forward(self, x):
+        x = self.in_conv(x)
+
+        h = self.group1(x)
+        h = self.act1(h)
+        h = self.conv1(h)
+        h = self.group2(h)
+        h = self.act2(h)
+        h = self.conv2(h)
+
+        x = x + h
+        return self.out_conv(x)
+
+
 ################## SUPPORT FUNCTIONS
 class conv_block(nn.Module):
     def __init__(self, ch_in, ch_out):
